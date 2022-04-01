@@ -1,18 +1,27 @@
-<!--<form class="card" [formGroup]="form" (ngSubmit)="submit()">
+<form class="card" [formGroup]="myForm" (ngSubmit)="submit">
   <h2>Войти в панель администратора</h2>
+
+  <div class="alert alert-danger" *ngIf="auth.error$ | async as error">
+    {{error}}
+  </div>
+
+  <div class="alert info" *ngIf=message>
+    {{message}}
+  </div>
+
   <div
     class="form-control"
-    [ngClass]="{invalid: form.get('email').touched && form.get('email').invalid}"
+    [ngClass]="{invalid: myForm.get('email')?.touched && myForm.get('email')?.invalid}"
   >
     <label for="email">Email:</label>
-    <input id="email" type="email">
+    <input id="email" type="email" formControlName="email">
     <div
-      *ngIf="form.get('email').touched && form.get('email').invalid"
+      *ngIf="myForm.get('email')?.touched && myForm.get('email')?.invalid"
       class="validation">
-      <small *ngIf="form.get('email').errors.required">
-        Поле не должно быть пустым
+      <small *ngIf="myForm.get('email')?.errors?.['required']">
+        Введите email
       </small>
-      <small *ngIf="form.get('email').errors.email">
+      <small *ngIf="myForm.get('email')?.errors?.['email']">
         Введите корректный email
       </small>
     </div>
@@ -20,71 +29,29 @@
 
   <div
     class="form-control"
-    [ngClass]="{invalid: form.get('password').touched && form.get('password').invalid}"
+    [ngClass]="{invalid: myForm.get('password')?.touched && myForm.get('password')?.invalid}"
   >
-    <label for="password">Пароль:</label>
-    <input id="password" type="password">
-    <div
-      *ngIf="form.get('password').touched && form.get('password').invalid"
-      class="validation">
-      <small>error</small>
-    </div>
-  </div>
-
-  <button
-    type="submit"
-    [disabled]="form.invalid"
-    class="btn btn-primary">Войти</button>
-</form>-->
-
-<form class="card" [formGroup]="form" (ngSubmit)="submit()">
-  <h2>Войти в панель администратора</h2>
-
-  <!--<div
-    class="form-control"
-    [ngClass]="{invalid: form.get('email').touched && form.get('email').invalid}"
-  >
-    <label for="email">Email:</label>
-    <input id="email" type="email" formControlName="email">
-    <div
-      *ngIf="form.get('email').touched && form.get('email').invalid"
-      class="validation"
-    >
-      <small *ngIf="form.get('email').errors.required">
-        Введите поле email
-      </small>
-      <small *ngIf="form.get('email').errors.email">
-        Поле email должно быть email
-      </small>
-    </div>
-  </div>
-
-  <div
-    class="form-control"
-    [ngClass]="{invalid: form.get('password').touched && form.get('password').invalid}"
-  >
-    <label for="password">Пароль:</label>
+    <label for="password">Password:</label>
     <input id="password" type="password" formControlName="password">
     <div
       class="validation"
-      *ngIf="form.get('password').touched && form.get('password').invalid"
+      *ngIf="myForm.get('password')?.touched && myForm.get('password')?.invalid"
     >
-      <small *ngIf="form.get('password').errors.required">
+      <small *ngIf="myForm.get('password')?.errors?.['required']">
         Введите пароль
       </small>
-      <small *ngIf="form.get('password').errors.minlength">
-        Пароль должен быть не менее
-        {{form.get('password').errors.minlength.requiredLength}}
-        символов. Сейчас он
-        {{form.get('password').errors.minlength.actualLength}}
-        символа.
+      <small *ngIf="myForm.get('password')?.errors?.['minlength']">
+        Пароль должен быть не менее 6 символов.
       </small>
     </div>
-  </div>-->
+  </div>
 
   <button
     type="submit"
     class="btn btn-primary"
-    [disabled]="form.invalid"
-  >Войти</button>
+    [disabled]="myForm.invalid || submitted"
+  >Войти
+  </button>
 </form>
+
+
