@@ -1,5 +1,8 @@
-import {Component, OnInit} from '@angular/core'
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {User} from '../../shared/interfaces';
+import {AuthService} from "../shared/services/auth.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-login-page',
@@ -8,35 +11,56 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 })
 export class LoginPageComponent implements OnInit {
 
-  form!: FormGroup
+  myForm: FormGroup = new FormGroup({
+    email: new FormControl(null, [
+      Validators.required,
+      Validators.email
+    ]),
+    password: new FormControl(null, [
+      Validators.required,
+      Validators.minLength(6)
+    ]),
+  });
 
-  constructor() {
+  submitted = false
+  message!: string
+
+  constructor(
+    public auth: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {
   }
 
-  ngOnInit() {
-    this.form = new FormGroup({
-      email: new FormControl(null, [
-        Validators.required,
-        Validators.email
-      ]),
-      password: new FormControl(null, [
-        Validators.required,
-        Validators.minLength(6)
-      ])
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['loginAgain']) {
+        this.message = 'Введите данные'
+      } else if (params['authFailed']) {
+        this.message = 'Сессия истекла. Введите данные заново'
+      }
     })
   }
 
   submit() {
-    if (this.form.invalid) {
+    if (this.myForm.invalid) {
       return
     }
 
-    /*const user: User = {
-      email: this.form.value.email,
-      password: this.form.value.password
-    }*/
+    this.submitted = true
 
+    const user: User = {
+      email: this.myForm.value.email,
+      password: this.myForm.value.password,
+    }
 
+    this.auth.login(user).subscribe(() => {
+      this.myForm.reset()
+      this.router.navigate(['/admin', '/dashboard'])
+      this.submitted = false
+    }, () => {
+      this.submitted = false
+    })
   }
-}
 
+}
