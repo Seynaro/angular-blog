@@ -10,13 +10,13 @@ import { PostsService } from '../shared/post.service';
 })
 export class HomePageComponent implements OnInit {
 
-  posts$!: Observable<Post[]>
+
 
   constructor(private postsService: PostsService) {
   }
 
   ngOnInit() {
-    this.posts$ = this.postsService.getAll()
+
   }
 
 }
